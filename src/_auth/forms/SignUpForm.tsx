@@ -19,7 +19,11 @@ import { useToast } from "../../components/ui/use-toast";
 import { useCreateUserAccount, useSignInAccount } from "../../lib/react-query/queriesAndMutations";
 import { useUserContext } from "../../context/AuthContext";
 
-const SignUpForm = ({title}) => {
+interface SignUpFormProps {
+  title: string;
+}
+
+const SignUpForm: React.FC<SignUpFormProps> = ({title}) => {
   const { toast } = useToast();
   const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
   const navigate = useNavigate();

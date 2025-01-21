@@ -11,16 +11,28 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Input } from "../../components/ui/input";
 import { useEffect } from "react";
-import { SignupValidation } from "../../lib/validation";
+import { SigninValidation } from "../../lib/validation";
 import {z} from "zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BarLoader from "../../components/shared/Loader";
+import { useToast } from "../../components/ui/use-toast";
+import { useUserContext } from "../../context/AuthContext";
+import { useSignInAccount } from "../../lib/react-query/queriesAndMutations";
 
-const SigninForm = ({title}) => {
-  const isLoading = false;
+type PostTitleProp = {
+  title: string;
+}
+
+const SigninForm = ({ title }: PostTitleProp ) => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+
+  // Query
+  const { mutateAsync: signInAccount, isPending: isLoading } = useSignInAccount();
   const clickLinkTag = () => {
     document.addEventListener("click", () => {
-        document.title = "Login | Digeon"
+        document.title = "Sign Up | Digeon"
     })
 }
 
@@ -45,21 +57,35 @@ const SigninForm = ({title}) => {
   }, [title]);
 
     // 1. Define your form.
-    const form = useForm<z.infer<typeof SignupValidation>>({
-      resolver: zodResolver(SignupValidation),
+    const form = useForm<z.infer<typeof SigninValidation>>({
+      resolver: zodResolver(SigninValidation),
       defaultValues: {
-        name: '',
-        username: '',
         email: '',
         password: '',
       },
     })
 
-    function onSubmit(values: z.infer<typeof SignupValidation>) {
-      // Do something with the form values.
-      // ✅ This will be type-safe and validated.
-      console.log(values)
-    }
+    const onSubmit = async (user: z.infer<typeof SigninValidation>) => {
+      const session = await signInAccount(user);
+  
+      if (!session) {
+        toast({ title: "Login failed. Please try again." });
+        
+        return;
+      }
+  
+      const isLoggedIn = await checkAuthUser();
+  
+      if (isLoggedIn) {
+        form.reset();
+  
+        navigate("/");
+      } else {
+        toast({ title: "Login failed. Please try again.", });
+        
+        return;
+      }
+    };
     return (
       <div className="flex relative top-4 items-center justify-evenly flex-col min-h-[30rem] w-[28rem] gap-8">
          <h2 className="text-6xl absolute -top-20 w-[120%] text-white font-bold text-center tracking-wider">Welcome back to 
@@ -81,12 +107,12 @@ const SigninForm = ({title}) => {
             />
             <FormField
               control={form.control}
-              name="email"
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-white text-1xl w-full">Password</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -97,7 +123,7 @@ const SigninForm = ({title}) => {
                 type="submit" 
                 className={`w-full`}
                 >
-                  {isLoading ? (
+                  {isLoading || isUserLoading ? (
                     <div className="flex items-center justify-center gap-5">
                       <BarLoader />
                     </div>

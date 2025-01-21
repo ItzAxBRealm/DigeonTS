@@ -1,9 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { LoginImg } from "../assets";
 import Footer from "../components/Footer";
+import { useUserContext } from "../context/AuthContext";
 
 const AuthLayout = () => {
-  const isAuthenticated = false;
+    const { isAuthenticated } = useUserContext();
   return (
     <>
         {isAuthenticated ? (

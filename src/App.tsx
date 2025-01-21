@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import { AllUsers, CreatePost, EditPost, Explore, Home, PostDetails, Profile, Saved, UpdateProfile } from "./_root/pages"
 import RootLayout from "./_root/RootLayout";
 import SignUpForm from "./_auth/forms/SignUpForm";
@@ -11,12 +11,12 @@ const App = () => {
       <main className="flex h-screen">
         <Routes>
           <Route element={<AuthLayout />}>
-            <Route path="/sign-in" element={<SigninForm />} />
-            <Route path="/sign-up" element={<SignUpForm />} />
+            <Route path="/sign-in" element={<SigninForm title="Sign In" />} />
+            <Route path="/sign-up" element={<SignUpForm title="Sign Up" />} />
           </Route>
         
           <Route element={<RootLayout />}>
-            <Route index element={<Home />} />
+            <Route index element={<Home title="Home - Digeon" />} />
             <Route path="/explore" element={<Explore />} />
             <Route path="/saved" element={<Saved />} />
             <Route path="/all-users" element={<AllUsers />} />

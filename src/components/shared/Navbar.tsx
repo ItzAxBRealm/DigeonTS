@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { addPost, galleryIcon, HomeIcon, Logo, LogoutIcon, PeopleIcon, savedIcon } from '../../assets'
+import { addPost, galleryIcon, HomeIcon, Logo, LogoutIcon, PeopleIcon, saveNavIcon } from '../../assets'
 import GradientShadowButton from '../Button'
 import { useEffect } from 'react'
 import { useUserContext } from '../../context/AuthContext'
@@ -16,7 +16,7 @@ const Navbar = () => {
     }, [isSuccess, navigate])
 
   return (
-    <nav className="max-sm:hidden sm:hidden xl:block lg:block md:block top-0 sticky z-10 bg-[#131313] md:h-14 lg:h-20 xl:h-20 w-full text-white">
+    <nav className="max-sm:hidden sm:hidden xl:block lg:block md:block top-0 fixed z-10 bg-[#131313] md:h-14 lg:h-20 xl:h-20 w-full text-white">
         <div className="flex items-center justify-between">
             <div className='px-4 flex items-center justify-center flex-row xl:gap-16 lg:gap-12 md:gap-5'>
               <Link to="/" className='cursor-pointer'>
@@ -49,7 +49,7 @@ const Navbar = () => {
                   <NavLink to="/saved" className={({isActive}) =>
                   `font-light xl:text-lg active:bg-indigo-700 lg:text-base md:text-sm flex flex-row hover:bg-indigo-400 gap-2 py-1 xl:px-4 lg:px-2 md:px-1 xl:rounded-full lg:rounded-lg md:rounded-lg ${isActive ? "bg-purple-1" : ""}`
                   }>
-                  <img src={savedIcon} width={20} height={20} className="lg:block xl:block md:hidden" alt="People" /> Saved
+                  <img src={saveNavIcon} width={20} height={20} className="lg:block xl:block md:hidden" alt="People" /> Saved
                   </NavLink>
                 </li>
                 <li>

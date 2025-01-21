@@ -11,15 +11,18 @@ import { PostValidation } from "../../lib/validation"
 import { Models } from "appwrite"
 import { useUserContext } from "../../context/AuthContext"
 import { useToast } from "../ui/use-toast"
-import { useCreatePost } from "../../lib/react-query/queriesAndMutations"
+import { useCreatePost, useUpdatePost } from "../../lib/react-query/queriesAndMutations"
 
 type PostFormProps = {
   post?: Models.Document;
+  action: 'Create' | 'Update';
 }
 
-const PostForm = ({ post }: PostFormProps) => {
+const PostForm = ({ post, action }: PostFormProps) => {
 
   const {mutateAsync: createPost, isPending: isLoadingCreate} = useCreatePost();
+  const {mutateAsync: updatePost, isPending: isLoadingUpdate} = useUpdatePost();
+
   const { user } = useUserContext();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -37,6 +40,22 @@ const PostForm = ({ post }: PostFormProps) => {
  
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof PostValidation>) {
+    if(post && action === 'Update'){
+      const updatedPost = await updatePost({
+        ...values,
+        postId: post.$id,
+        imageId: post?.imageId,
+        imageUrl: post?.imageUrl,
+      })
+
+      if(!updatedPost){
+        toast({title: "Error fetching data, Please try again."})
+      }
+
+      return navigate(`/posts/${post.$id}`)
+    }
+
+
     const newPost = await createPost({
       ...values,
       userId: user.id,
@@ -50,6 +69,8 @@ const PostForm = ({ post }: PostFormProps) => {
 
     navigate('/');
   }
+
+  console.log(post?.imageUrl);
 
   return (
     <Form {...form}>
@@ -111,7 +132,7 @@ const PostForm = ({ post }: PostFormProps) => {
         />
         <div className="flex items-center justify-between gap-5 w-full">
           <Button type="button" className="py-2 px-5 rounded-md bg-zinc-900 border-none outline-none hover:bg-zinc-800 active:bg-zinc-700 w-1/2">Cancel</Button>
-          <Button type="submit" className="py-2 px-5 rounded-md bg-purple-1 border-none outline-none hover:bg-purple-1/80 active:bg-purple-1/70 w-1/2">Submit</Button>
+          <Button type="submit" className="py-2 px-5 rounded-md bg-purple-1 border-none outline-none hover:bg-purple-1/80 active:bg-purple-1/70 w-1/2" disabled={isLoadingCreate || isLoadingUpdate}>{isLoadingCreate || isLoadingUpdate && 'Loading...'}{action} Post</Button>
         </div>
       </form>
     </Form>
