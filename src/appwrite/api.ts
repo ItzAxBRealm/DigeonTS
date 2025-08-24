@@ -11,7 +11,6 @@ export async function createUserAccount(user: INewUser){
             user.name
         )
 
-        if(!newAccount) console.log("New Account not found! ", Error);
         const avatarUrl = avatars.getInitials(user.name);
         const newUser = await saveUserToDB({
             accountId: newAccount.$id,
@@ -20,8 +19,6 @@ export async function createUserAccount(user: INewUser){
             username: user.username,
             imageUrl: avatarUrl,
         })
-        console.log("Account: " + newAccount);
-        console.log("User: " + newUser);
 
         return newUser;
     } catch (error) {
@@ -91,7 +88,6 @@ export async function logOutAccount() {
 
 export async function createPost(post: INewPost) {
     try {
-        // Upload file to appwrite storage
         const uploadedFile = await uploadFile(post.file[0]);
 
         if (!uploadedFile) throw Error;
@@ -102,10 +98,8 @@ export async function createPost(post: INewPost) {
         throw Error;
         }
 
-        // Convert tags into array
         const tags = post.tags?.replace(/ /g, "").split(",") || [];
 
-        // Create post
         const newPost = await databases.createDocument(
         appwriteConfig.databaseId,
         appwriteConfig.postCollectionId,
@@ -279,11 +273,9 @@ export async function updatePost(post: IUpdatePost) {
         }
 
         if(hasFileToUpdate){
-            // Upload file to appwrite storage
             const uploadedFile = await uploadFile(post.file[0]);
             if (!uploadedFile) throw Error;
 
-            // Get file url
             const fileUrl = getFilePreview(uploadedFile.$id);
             if (!fileUrl) {
                 await deleteFile(uploadedFile.$id);
