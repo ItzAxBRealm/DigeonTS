@@ -96,7 +96,6 @@ export async function createPost(post: INewPost) {
 
         if (!uploadedFile) throw Error;
 
-        // Get file url
         const fileUrl = getFilePreview(uploadedFile.$id);
         if (!fileUrl) {
         await deleteFile(uploadedFile.$id);
@@ -294,10 +293,8 @@ export async function updatePost(post: IUpdatePost) {
             image = {...image, imageUrl: fileUrl, imageId: uploadedFile.$id }
         }
 
-        // Convert tags into array
         const tags = post.tags?.replace(/ /g, "").split(",") || [];
 
-        // Create post
         const updatedPost = await databases.updateDocument(
         appwriteConfig.databaseId,
         appwriteConfig.postCollectionId,
@@ -424,11 +421,9 @@ export async function updateUser(user: IUpdateUser) {
       };
   
       if (hasFileToUpdate) {
-        // Upload new file to appwrite storage
         const uploadedFile = await uploadFile(user.file[0]);
         if (!uploadedFile) throw Error;
   
-        // Get new file url
         const fileUrl = getFilePreview(uploadedFile.$id);
         if (!fileUrl) {
           await deleteFile(uploadedFile.$id);
@@ -438,7 +433,6 @@ export async function updateUser(user: IUpdateUser) {
         image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
       }
   
-      //  Update user
       const updatedUser = await databases.updateDocument(
         appwriteConfig.databaseId,
         appwriteConfig.userCollectionId,
@@ -451,17 +445,13 @@ export async function updateUser(user: IUpdateUser) {
         }
       );
   
-      // Failed to update
       if (!updatedUser) {
-        // Delete new file that has been recently uploaded
         if (hasFileToUpdate) {
           await deleteFile(image.imageId);
         }
-        // If no new file uploaded, just throw error
         throw Error;
       }
   
-      // Safely delete old file after successful update
       if (user.imageId && hasFileToUpdate) {
         await deleteFile(user.imageId);
       }

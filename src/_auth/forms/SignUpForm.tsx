@@ -38,10 +38,8 @@ const SignUpForm: React.FC<SignUpFormProps> = ({title}) => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        // Left the Tab
         document.title = "We miss you...";
       } else {
-        // Active
         document.title = title;
       }
     };
@@ -57,7 +55,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({title}) => {
   const { mutateAsync: createUserAccount , isPending: isCreatingAccount } = useCreateUserAccount();
   const { mutateAsync: signInAccount, isPending: isSigningIn } = useSignInAccount();
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
