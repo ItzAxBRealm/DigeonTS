@@ -27,7 +27,6 @@ const PostForm = ({ post, action }: PostFormProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-   // 1. Define your form.
    const form = useForm<z.infer<typeof PostValidation>>({
     resolver: zodResolver(PostValidation),
     defaultValues: {
@@ -38,7 +37,6 @@ const PostForm = ({ post, action }: PostFormProps) => {
     },
   })
  
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof PostValidation>) {
     if(post && action === 'Update'){
       const updatedPost = await updatePost({

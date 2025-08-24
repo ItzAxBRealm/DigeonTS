@@ -28,7 +28,6 @@ const SigninForm = ({ title }: PostTitleProp ) => {
   const navigate = useNavigate();
   const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
 
-  // Query
   const { mutateAsync: signInAccount, isPending: isLoading } = useSignInAccount();
   const clickLinkTag = () => {
     document.addEventListener("click", () => {
@@ -40,10 +39,8 @@ const SigninForm = ({ title }: PostTitleProp ) => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        // Left the Tab
         document.title = "We miss you...";
       } else {
-        // Active
         document.title = title;
       }
     };
@@ -56,7 +53,6 @@ const SigninForm = ({ title }: PostTitleProp ) => {
     
   }, [title]);
 
-    // 1. Define your form.
     const form = useForm<z.infer<typeof SigninValidation>>({
       resolver: zodResolver(SigninValidation),
       defaultValues: {

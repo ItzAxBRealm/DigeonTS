@@ -17,10 +17,8 @@ const Home: React.FC<HomePageProps> = ({ title }) => {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        // Left the Tab
         document.title = "Home- Click here!";
       } else {
-        // Active
         document.title = title;
       }
     };
